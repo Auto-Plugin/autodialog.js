@@ -1,5 +1,5 @@
 import './style.css'
-import { autodialog } from './core'
+import { autodialog } from './core/index'
 
 export * from './adapters/html'
 export * from './adapters/vue'

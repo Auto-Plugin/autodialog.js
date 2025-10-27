@@ -12,7 +12,16 @@ export interface Adapter {
   unmount?: (panel: HTMLElement) => void
 }
 
+export interface DialogDomMoveConfig {
+  /** 弹窗容器的ID */
+  containerId: string
+  /** 需要移动的DOM元素ID */
+  sourceElementId: string
+}
+
 export interface DialogOptions {
+  /** DOM移动配置，如果提供此参数则跳过适配器，直接使用DOM移动 */
+  domMove?: DialogDomMoveConfig
   title?: string
   props?: Record<string, any>
   onClose?: () => void
@@ -37,6 +46,45 @@ export class Dialog {
   private lastContent: any = null
   private currentOptions: DialogOptions = {}
   private static activeDialogs: Set<Dialog> = new Set()
+  
+  // DOM移动相关属性
+  private originalParent: HTMLElement | null = null    // 保存原始父元素
+  private movedElement: HTMLElement | null = null      // 被移动的元素
+  private isDomMoveMode = false                         // 是否使用DOM移动模式
+
+  /**
+   * 移动DOM元素到弹窗容器中
+   */
+  private moveElementToDialog(sourceElementId: string, targetElement: HTMLElement): boolean {
+    const sourceElement = document.getElementById(sourceElementId)
+    
+    if (sourceElement && targetElement) {
+      // 保存原始父元素，用于关闭时恢复
+      this.originalParent = sourceElement.parentElement
+      this.movedElement = sourceElement
+      
+      // 使用appendChild直接移动元素（不复制）
+      targetElement.appendChild(sourceElement)
+      console.log('元素已移动到弹窗中:', sourceElementId)
+      return true
+    } else {
+      console.error('找不到源元素或目标元素', { sourceElementId, targetElement })
+      return false
+    }
+  }
+
+  /**
+   * 将元素移回原位置
+   */
+  private restoreElement(): void {
+    if (this.movedElement && this.originalParent) {
+      this.originalParent.appendChild(this.movedElement)
+      console.log('元素已恢复到原位置')
+    }
+    this.originalParent = null
+    this.movedElement = null
+    this.isDomMoveMode = false
+  }
 
   private detectAdapter(content: any): Adapter {
     if (typeof content === 'string' || content instanceof HTMLElement || content instanceof DocumentFragment)
@@ -59,7 +107,10 @@ export class Dialog {
     // 如果当前实例已打开，则先关闭
     if (this.isOpen) this.close()
 
-    const adapter = this.detectAdapter(content)
+    // 检查是否使用DOM移动模式
+    const isDomMoveMode = !!(options.domMove?.containerId && options.domMove?.sourceElementId)
+    this.isDomMoveMode = isDomMoveMode
+
     const {
       onBeforeOpen,
       onOpened,
@@ -67,6 +118,7 @@ export class Dialog {
       allowScroll = false,
       animation = true,
       animationDuration = 200,
+      domMove,
     } = options
 
     this.currentOptions = options
@@ -82,6 +134,11 @@ export class Dialog {
     container.className = 'autodialog-container'
     container.style.zIndex = String(9999 + Dialog.activeDialogs.size)
 
+    // 如果是DOM移动模式且提供了containerId，设置容器ID
+    if (isDomMoveMode && domMove!.containerId) {
+      container.id = domMove!.containerId
+    }
+
     // 遮罩
     const maskEl = document.createElement('div')
     maskEl.className = 'autodialog-mask'
@@ -94,7 +151,8 @@ export class Dialog {
     // 组装
     container.appendChild(maskEl)
     container.appendChild(panelEl)
-    document.body.appendChild(container)
+    document.getElementById('root')!.appendChild(container)
+    // document.body.appendChild(container)
 
     this.container = container
     this.maskEl = maskEl
@@ -115,14 +173,26 @@ export class Dialog {
       })
     }
 
-    // 渲染内容：把内容 mount 到 panel 上，不是 container
-    adapter.render(content, {
-      container,
-      panel: panelEl,
-      title: options.title,
-      props: options.props,
-      onClose: () => this.close(),
-    })
+    // 根据模式选择渲染方式
+    if (isDomMoveMode) {
+      // DOM移动模式：直接移动指定元素到弹窗中
+      const moveSuccess = this.moveElementToDialog(domMove!.sourceElementId, panelEl)
+      if (!moveSuccess) {
+        // 如果移动失败，清理并退出
+        this.close()
+        return
+      }
+    } else {
+      // 适配器模式：使用原有的适配器系统
+      const adapter = this.detectAdapter(content)
+      adapter.render(content, {
+        container,
+        panel: panelEl,
+        title: options.title,
+        props: options.props,
+        onClose: () => this.close(),
+      })
+    }
 
     // === 进入动画 ===
     if (animation) {
@@ -157,7 +227,7 @@ export class Dialog {
 
   close() {
     if (!this.isOpen || !this.container || !this.panelEl || !this.maskEl) return
-    const adapter = this.detectAdapter(this.lastContent)
+    
     const {
       allowScroll,
       animation = true,
@@ -185,7 +255,16 @@ export class Dialog {
       this.maskEl.classList.remove('autodialog-mask-visible')
 
       setTimeout(() => {
-        adapter?.unmount?.(this.panelEl!)
+        // 根据模式选择清理方式
+        if (this.isDomMoveMode) {
+          // DOM移动模式：将元素移回原位置
+          this.restoreElement()
+        } else {
+          // 适配器模式：使用适配器的卸载方法
+          const adapter = this.detectAdapter(this.lastContent)
+          adapter?.unmount?.(this.panelEl!)
+        }
+        
         this.container?.remove()
         this.container = null
         this.maskEl = null
@@ -193,7 +272,16 @@ export class Dialog {
         onClosed?.()
       }, animationDuration)
     } else {
-      adapter?.unmount?.(this.panelEl!)
+      // 根据模式选择清理方式
+      if (this.isDomMoveMode) {
+        // DOM移动模式：将元素移回原位置
+        this.restoreElement()
+      } else {
+        // 适配器模式：使用适配器的卸载方法
+        const adapter = this.detectAdapter(this.lastContent)
+        adapter?.unmount?.(this.panelEl!)
+      }
+      
       this.container.remove()
       this.container = null
       this.maskEl = null
