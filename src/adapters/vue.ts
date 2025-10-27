@@ -12,8 +12,8 @@ export const VueAdapter = {
     // 创建一个 Vue 应用实例
     const app = createApp({
       render() {
-        return h('div', { class: 'ad-vue-wrapper' }, [
-          title ? h('div', { class: 'ad-header' }, title) : null,
+        return h('div', { class: 'autodialog-vue-wrapper' }, [
+          title ? h('div', { class: 'autodialog-header' }, title) : null,
           h(Component, { ...props, onClose }),
         ])
       },

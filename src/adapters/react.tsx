@@ -16,8 +16,8 @@ export const ReactAdapter = {
 
     // 统一封装层
     root.render(
-      <div className="ad-react-wrapper">
-        {title && <div className="ad-header">{title}</div>}
+      <div className="autodialog-react-wrapper">
+        {title && <div className="autodialog-header">{title}</div>}
         <Component {...props} onClose={onClose} />
       </div>
     )

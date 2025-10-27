@@ -1,5 +1,5 @@
 /* 整个对话框层：负责定位、捕获点击 */
-.ad-container {
+.autodialog-container {
   position: fixed;
   inset: 0;
   display: flex;
@@ -10,7 +10,7 @@
 }
 
 /* 遮罩：单独节点，不再用 ::before */
-.ad-mask {
+.autodialog-mask {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.35);
@@ -19,24 +19,24 @@
   pointer-events: auto;
 }
 
-/* 遮罩进入初始态 (show 前一刻加 ad-mask-init) */
-.ad-mask-init {
+/* 遮罩进入初始态 (show 前一刻加 autodialog-mask-init) */
+.autodialog-mask-init {
   opacity: 0;
 }
 
-/* 遮罩可见态 (requestAnimationFrame 后加 ad-mask-visible) */
-.ad-mask-visible {
+/* 遮罩可见态 (requestAnimationFrame 后加 autodialog-mask-visible) */
+.autodialog-mask-visible {
   opacity: 1;
 }
 
-/* 遮罩离场态 (close() 时加 ad-mask-leave) */
-.ad-mask-leave {
+/* 遮罩离场态 (close() 时加 autodialog-mask-leave) */
+.autodialog-mask-leave {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
 /* 面板容器：实际内容挂载点 */
-.ad-panel {
+.autodialog-panel {
   position: relative;
   z-index: 1;
   background: #fff;
@@ -52,19 +52,19 @@
 }
 
 /* 进入动画起点（默认） */
-.ad-anim-enter {
+.autodialog-anim-enter {
   opacity: 0;
   transform: translateY(20px);
 }
 
-/* 进入后目标态（在 rAF 后加 .ad-visible） */
-.ad-visible {
+/* 进入后目标态（在 rAF 后加 .autodialog-visible） */
+.autodialog-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
 /* 离场动画（close 时加） */
-.ad-anim-leave {
+.autodialog-anim-leave {
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.25s ease, transform 0.25s ease;

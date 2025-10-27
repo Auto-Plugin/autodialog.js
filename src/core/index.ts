@@ -79,17 +79,17 @@ export class Dialog {
     // === 构建 DOM ===
     // 外层容器负责定位和点击捕获
     const container = document.createElement('div')
-    container.className = 'ad-container'
+    container.className = 'autodialog-container'
     container.style.zIndex = String(9999 + Dialog.activeDialogs.size)
 
     // 遮罩
     const maskEl = document.createElement('div')
-    maskEl.className = 'ad-mask'
+    maskEl.className = 'autodialog-mask'
     if (!showMask) maskEl.style.display = 'none'
 
     // 面板（真正挂用户内容的地方）
     const panelEl = document.createElement('div')
-    panelEl.className = 'ad-panel'
+    panelEl.className = 'autodialog-panel'
 
     // 组装
     container.appendChild(maskEl)
@@ -126,13 +126,13 @@ export class Dialog {
 
     // === 进入动画 ===
     if (animation) {
-      const enterClass = options.animationClass?.enter || 'ad-anim-enter' // 面板进入起始态
-      const visibleClass = 'ad-visible'                                   // 面板目标态
-      const maskShowClass = 'ad-mask-visible'                              // 遮罩目标态
+      const enterClass = options.animationClass?.enter || 'autodialog-anim-enter' // 面板进入起始态
+      const visibleClass = 'autodialog-visible'                                   // 面板目标态
+      const maskShowClass = 'autodialog-mask-visible'                              // 遮罩目标态
 
       // 初始：面板带 enterClass，遮罩透明
       panelEl.classList.add(enterClass)
-      maskEl.classList.add('ad-mask-init')
+      maskEl.classList.add('autodialog-mask-init')
 
       // 下一帧：过渡到可见
       requestAnimationFrame(() => {
@@ -149,8 +149,8 @@ export class Dialog {
       }, animationDuration)
     } else {
       // 无动画，直接可见
-      panelEl.classList.add('ad-visible')
-      maskEl.classList.add('ad-mask-visible')
+      panelEl.classList.add('autodialog-visible')
+      maskEl.classList.add('autodialog-mask-visible')
       onOpened?.()
     }
   }
@@ -176,13 +176,13 @@ export class Dialog {
     }
 
     if (animation) {
-      const leaveClass = animationClass?.leave || 'ad-anim-leave'
+      const leaveClass = animationClass?.leave || 'autodialog-anim-leave'
       // 面板开始离场
       this.panelEl.classList.add(leaveClass)
-      this.panelEl.classList.remove('ad-visible')
+      this.panelEl.classList.remove('autodialog-visible')
       // 遮罩开始淡出
-      this.maskEl.classList.add('ad-mask-leave')
-      this.maskEl.classList.remove('ad-mask-visible')
+      this.maskEl.classList.add('autodialog-mask-leave')
+      this.maskEl.classList.remove('autodialog-mask-visible')
 
       setTimeout(() => {
         adapter?.unmount?.(this.panelEl!)
