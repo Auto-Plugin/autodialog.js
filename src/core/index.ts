@@ -204,4 +204,4 @@ export class Dialog {
 }
 
 // 默认导出的全局实例
-export const dialog = new Dialog()
+export const autodialog = new Dialog()
