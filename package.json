@@ -1,15 +1,15 @@
 {
-  "name": "autodialog",
+  "name": "autodialog.js",
   "version": "0.0.1",
   "type": "module",
-  "main": "dist/autodialog.cjs",
+  "main": "dist/autodialog.cjs.js",
   "module": "dist/autodialog.esm.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/autodialog.esm.js",
-      "require": "./dist/autodialog.cjs"
+      "require": "./dist/autodialog.cjs.js"
     }
   },
   "scripts": {

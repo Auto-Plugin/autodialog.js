@@ -1,9 +1,9 @@
-export { dialog, Dialog } from './core'
-import { Dialog } from './core'
+import './style.css'
+import { dialog as autodialog, Dialog } from './core'
+
 export * from './adapters/html'
 export * from './adapters/vue'
 export * from './adapters/react'
-import './style.css'
+export { autodialog, Dialog }
 
-const autoDialog = new Dialog()
-export default autoDialog
+export default autodialog
