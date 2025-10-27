@@ -1,0 +1,71 @@
+/* 整个对话框层：负责定位、捕获点击 */
+.ad-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* z-index 在运行时塞 */
+  pointer-events: auto; /* 现在我们允许点遮罩 */
+}
+
+/* 遮罩：单独节点，不再用 ::before */
+.ad-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: auto;
+}
+
+/* 遮罩进入初始态 (show 前一刻加 ad-mask-init) */
+.ad-mask-init {
+  opacity: 0;
+}
+
+/* 遮罩可见态 (requestAnimationFrame 后加 ad-mask-visible) */
+.ad-mask-visible {
+  opacity: 1;
+}
+
+/* 遮罩离场态 (close() 时加 ad-mask-leave) */
+.ad-mask-leave {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* 面板容器：实际内容挂载点 */
+.ad-panel {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  min-width: 300px;
+  max-width: 80vw;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  will-change: opacity, transform;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* 进入动画起点（默认） */
+.ad-anim-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* 进入后目标态（在 rAF 后加 .ad-visible） */
+.ad-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 离场动画（close 时加） */
+.ad-anim-leave {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}

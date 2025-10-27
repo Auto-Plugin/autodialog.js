@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "declaration": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    // 👇 关键部分
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "include": ["src"]
+}
