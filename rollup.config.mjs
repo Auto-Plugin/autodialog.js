@@ -13,16 +13,7 @@ export default {
     { file: 'dist/autodialog.esm.js', format: 'esm', sourcemap: true },
     { file: 'dist/autodialog.cjs.js', format: 'cjs', sourcemap: true }
   ],
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript(),
-    postcss({ inject: true, minimize: true })
-  ],
+  plugins: [resolve(), commonjs(), typescript(), postcss({ inject: { insertAt: 'top' }, minimize: true })],
   // ✅ 完整自动 external 方案
-  external: (id) =>
-    id.startsWith('react') ||
-    id.startsWith('vue') ||
-    builtinModules.includes(id) ||
-    Object.keys(pkg.peerDependencies || {}).includes(id)
+  external: (id) => id.startsWith('react') || id.startsWith('vue') || builtinModules.includes(id) || Object.keys(pkg.peerDependencies || {}).includes(id)
 }
