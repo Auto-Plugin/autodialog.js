@@ -1,6 +1,9 @@
 English | [简体中文](./README.md)
 
-# 🪟 Autodialog
+<div align="center">
+ <img src="./public/autodialog.svg" alt="Autodialog Logo" width="256" />
+ <h1>Autodialog</h1>
+</div>
 
 > **A lightweight, framework-agnostic dialog system.**
 > Works with **Vue**, **React**, **HTML**, and any framework via custom adapters.

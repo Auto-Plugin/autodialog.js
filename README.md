@@ -1,4 +1,9 @@
-# 🪟 Autodialog
+简体中文 | [English](./README.en.md)
+
+<div align="center">
+ <img src="./public/autodialog.svg" alt="Autodialog Logo" width="256" />
+ <h1>Autodialog</h1>
+</div>
 
 > **一个轻量、框架无关（framework-agnostic）的弹窗系统。**
 > 支持 **Vue**、**React**、**原生 HTML**，并可通过自定义适配器扩展到任意框架。
