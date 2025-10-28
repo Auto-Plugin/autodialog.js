@@ -134,12 +134,12 @@ autodialog.show(MyDialog, { props: { text: 'Hello Svelte' } })
 Autodialog injects only a few minimal styles for layout and transitions:
 
 ```CSS
-.ad-container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-.ad-mask { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); opacity: 0; transition: opacity 0.25s ease; }
-.ad-mask-visible { opacity: 1; }
-.ad-panel { position: relative; z-index: 1; background: white; border-radius: 8px; padding: 1.5rem 2rem; box-shadow: 0 8px 30px rgba(0,0,0,.2); opacity: 0; transform: translateY(20px); transition: opacity .25s, transform .25s; }
-.ad-visible { opacity: 1; transform: translateY(0); }
-.ad-anim-leave { opacity: 0; transform: translateY(10px); }
+.autodialog-container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+.autodialog-mask { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); opacity: 0; transition: opacity 0.25s ease; }
+.autodialog-mask-visible { opacity: 1; }
+.autodialog-panel { position: relative; z-index: 1; background: white; border-radius: 8px; padding: 1.5rem 2rem; box-shadow: 0 8px 30px rgba(0,0,0,.2); opacity: 0; transform: translateY(20px); transition: opacity .25s, transform .25s; }
+.autodialog-visible { opacity: 1; transform: translateY(0); }
+.autodialog-anim-leave { opacity: 0; transform: translateY(10px); }
 ```
 
 You can override them freely in your own CSS — they are low-specificity global rules.

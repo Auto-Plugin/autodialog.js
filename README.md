@@ -138,24 +138,24 @@ autodialog.show(MyDialog, { props: { text: '来自 Svelte 的弹窗 ✨' } })
 Autodialog 仅注入极少量样式，用于布局与动画：
 
 ```css
-.ad-container {
+.autodialog-container {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.ad-mask {
+.autodialog-mask {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
-.ad-mask-visible {
+.autodialog-mask-visible {
   opacity: 1;
 }
-.ad-panel {
+.autodialog-panel {
   position: relative;
   z-index: 1;
   background: white;
@@ -166,11 +166,11 @@ Autodialog 仅注入极少量样式，用于布局与动画：
   transform: translateY(20px);
   transition: opacity 0.25s, transform 0.25s;
 }
-.ad-visible {
+.autodialog-visible {
   opacity: 1;
   transform: translateY(0);
 }
-.ad-anim-leave {
+.autodialog-anim-leave {
   opacity: 0;
   transform: translateY(10px);
 }
