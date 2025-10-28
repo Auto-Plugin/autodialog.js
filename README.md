@@ -36,11 +36,11 @@
 ## 🚀 安装
 
 ```Shell
-npm install autodialog
+npm install autodialog.js
 # 或者
-pnpm add autodialog
+pnpm add autodialog.js
 # 或者
-yarn add autodialog
+yarn add autodialog.js
 ```
 
 ### 可选的 peer 依赖
