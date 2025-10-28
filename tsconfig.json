@@ -8,6 +8,10 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "autodialog": ["./src"]
+    },
 
     // 👇 关键部分
     "jsx": "react-jsx",

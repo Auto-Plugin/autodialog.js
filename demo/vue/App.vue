@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import autoDialog from '../../src';
+import autodialog from '../../src';
 import MyDialog from './MyDialog.vue'
 
 function open() {
-  autoDialog.show(MyDialog, { title: 'Vue 开发测试' })
+  autodialog.show(MyDialog, { title: 'Vue 开发测试' })
 }
 </script>
 

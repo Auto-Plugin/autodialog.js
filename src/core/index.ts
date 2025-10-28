@@ -2,16 +2,44 @@ import { VueAdapter } from '../adapters/vue'
 import { ReactAdapter } from '../adapters/react'
 import { HtmlAdapter } from '../adapters/html'
 
+/* -------------------- 类型定义 -------------------- */
+
+/**
+ * Dialog 动画类名配置项
+ */
 export interface DialogAnimationClass {
   enter?: string
   leave?: string
 }
 
+/**
+ * 适配器接口
+ * - render: 渲染内容到 panel 上
+ * - unmount: 卸载 panel 上的内容（可选）
+ */
 export interface Adapter {
-  render: (content: any, options: { container: HTMLElement; panel: HTMLElement; [key: string]: any }) => void
+  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any }) => void
   unmount?: (panel: HTMLElement) => void
 }
-
+/**
+ * 适配器注册项
+ */
+export interface AdapterEntry {
+  name?: string
+  /**
+   * 可选的检测函数，当返回 true 时 adapter 才会生效，默认总是匹配
+   * @param content 传入的内容
+   * @returns 
+   */
+  detect?: (content: any) => boolean
+  /**
+   * 适配器实例
+   */
+  adapter: Adapter
+}
+/**
+ * Dialog 配置项
+ */
 export interface DialogOptions {
   title?: string
   props?: Record<string, any>
@@ -22,6 +50,7 @@ export interface DialogOptions {
   animationClass?: DialogAnimationClass
   animationDuration?: number
 
+  // 生命周期钩子
   onBeforeOpen?: () => void
   onOpened?: () => void
   onBeforeClose?: () => void
@@ -29,16 +58,42 @@ export interface DialogOptions {
   onMaskClick?: () => void
 }
 
+/**
+ * Dialog 主类
+ */
 export class Dialog {
-  private container: HTMLElement | null = null         // 整个对话框层
-  private maskEl: HTMLElement | null = null            // 遮罩元素
-  private panelEl: HTMLElement | null = null           // 面板包裹元素（内容 mount 点）
+  private container: HTMLElement | null = null
+  private maskEl: HTMLElement | null = null
+  private panelEl: HTMLElement | null = null
   private isOpen = false
   private lastContent: any = null
   private currentOptions: DialogOptions = {}
-  private static activeDialogs: Set<Dialog> = new Set()
 
+  private static activeDialogs: Set<Dialog> = new Set()
+  private static customAdapters: AdapterEntry[] = []
+
+  /**
+   * 注册自定义适配器
+   */
+  static registerAdapter(entry: AdapterEntry) {
+    if (!entry || !entry.adapter || typeof entry.adapter.render !== 'function')
+      throw new Error('[autodialog] Invalid adapter registration')
+    Dialog.customAdapters.push(entry)
+  }
+
+  /** 
+   * 自动检测逻辑（detect 不强制
+   */
   private detectAdapter(content: any): Adapter {
+    // 1️⃣ 优先使用用户注册的自定义适配器
+    for (const { detect, adapter } of Dialog.customAdapters) {
+      try {
+        // detect 可省略：省略则直接匹配
+        if (!detect || detect(content)) return adapter
+      } catch { }
+    }
+
+    // 2️⃣ 内置适配器兜底
     if (typeof content === 'string' || content instanceof HTMLElement || content instanceof DocumentFragment)
       return HtmlAdapter
 
@@ -55,8 +110,10 @@ export class Dialog {
     throw new Error('[autodialog] Unsupported component type.')
   }
 
-  show(content: any, options: DialogOptions = {}) {
-    // 如果当前实例已打开，则先关闭
+  /** 
+   * 显示 Dialog
+   */
+  show<T = any>(content: T, options: DialogOptions = {}) {
     if (this.isOpen) this.close()
 
     const adapter = this.detectAdapter(content)
@@ -76,22 +133,17 @@ export class Dialog {
 
     onBeforeOpen?.()
 
-    // === 构建 DOM ===
-    // 外层容器负责定位和点击捕获
     const container = document.createElement('div')
     container.className = 'autodialog-container'
     container.style.zIndex = String(9999 + Dialog.activeDialogs.size)
 
-    // 遮罩
     const maskEl = document.createElement('div')
     maskEl.className = 'autodialog-mask'
     if (!showMask) maskEl.style.display = 'none'
 
-    // 面板（真正挂用户内容的地方）
     const panelEl = document.createElement('div')
     panelEl.className = 'autodialog-panel'
 
-    // 组装
     container.appendChild(maskEl)
     container.appendChild(panelEl)
     document.body.appendChild(container)
@@ -100,22 +152,19 @@ export class Dialog {
     this.maskEl = maskEl
     this.panelEl = panelEl
 
-    // 锁定滚动
-    if (allowScroll === false) {
-      document.body.style.overflow = 'hidden'
-    }
+    if (allowScroll === false) document.body.style.overflow = 'hidden'
 
     // 遮罩点击
     if (showMask) {
-      container.addEventListener('click', e => {
-        if (e.target === container || e.target === maskEl) {
+      maskEl.addEventListener('click', e => {
+        if (e.target === maskEl) {
           options.onMaskClick?.()
           if (options.onMaskClick === undefined) this.close()
         }
       })
     }
 
-    // 渲染内容：把内容 mount 到 panel 上，不是 container
+    // 渲染内容
     adapter.render(content, {
       container,
       panel: panelEl,
@@ -124,42 +173,30 @@ export class Dialog {
       onClose: () => this.close(),
     })
 
-    // === 进入动画 ===
+    // 动画进入
     if (animation) {
-      const enterClass = options.animationClass?.enter || 'autodialog-anim-enter' // 面板进入起始态
-      const visibleClass = 'autodialog-visible'                                   // 面板目标态
-      const maskShowClass = 'autodialog-mask-visible'                              // 遮罩目标态
-
-      // 初始：面板带 enterClass，遮罩透明
-      panelEl.classList.add(enterClass)
-      maskEl.classList.add('autodialog-mask-init')
-
-      // 下一帧：过渡到可见
+      const enter = options.animationClass?.enter || 'autodialog-anim-enter'
+      panelEl.classList.add(enter)
       requestAnimationFrame(() => {
-        // 面板：进入最终可见状态
-        panelEl.classList.add(visibleClass)
-        panelEl.classList.remove(enterClass)
-
-        // 遮罩：淡入
-        maskEl.classList.add(maskShowClass)
+        panelEl.classList.add('autodialog-visible')
+        panelEl.classList.remove(enter)
+        maskEl.classList.add('autodialog-mask-visible')
       })
-
-      setTimeout(() => {
-        onOpened?.()
-      }, animationDuration)
+      setTimeout(() => onOpened?.(), animationDuration)
     } else {
-      // 无动画，直接可见
       panelEl.classList.add('autodialog-visible')
       maskEl.classList.add('autodialog-mask-visible')
       onOpened?.()
     }
   }
-
+  /** 
+   * 关闭 Dialog
+   */
   close() {
     if (!this.isOpen || !this.container || !this.panelEl || !this.maskEl) return
     const adapter = this.detectAdapter(this.lastContent)
     const {
-      allowScroll,
+      allowScroll = false,
       animation = true,
       animationClass,
       animationDuration = 200,
@@ -171,37 +208,32 @@ export class Dialog {
     this.isOpen = false
     Dialog.activeDialogs.delete(this)
 
-    if (allowScroll === false && Dialog.activeDialogs.size === 0) {
+    if (allowScroll === false && Dialog.activeDialogs.size === 0)
       document.body.style.overflow = ''
-    }
 
     if (animation) {
-      const leaveClass = animationClass?.leave || 'autodialog-anim-leave'
-      // 面板开始离场
-      this.panelEl.classList.add(leaveClass)
+      const leave = animationClass?.leave || 'autodialog-anim-leave'
+      this.panelEl.classList.add(leave)
       this.panelEl.classList.remove('autodialog-visible')
-      // 遮罩开始淡出
       this.maskEl.classList.add('autodialog-mask-leave')
       this.maskEl.classList.remove('autodialog-mask-visible')
 
       setTimeout(() => {
         adapter?.unmount?.(this.panelEl!)
         this.container?.remove()
-        this.container = null
-        this.maskEl = null
-        this.panelEl = null
+        this.container = this.panelEl = this.maskEl = null
         onClosed?.()
       }, animationDuration)
     } else {
       adapter?.unmount?.(this.panelEl!)
       this.container.remove()
-      this.container = null
-      this.maskEl = null
-      this.panelEl = null
+      this.container = this.panelEl = this.maskEl = null
       onClosed?.()
     }
   }
 }
 
-// 默认导出的全局实例
+/**
+ * autodialog 可直接使用的单例 dialog
+ */
 export const autodialog = new Dialog()

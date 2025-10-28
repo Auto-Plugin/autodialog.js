@@ -13,6 +13,7 @@ async function main() {
     choices: [
       { title: 'Vue', value: 'vue' },
       { title: 'React', value: 'react' },
+      { title: 'Svelte', value: 'svelte' },
     ],
   })
 
