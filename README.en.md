@@ -31,11 +31,11 @@ English | [简体中文](./README.md)
 ## 🚀 Installation
 
 ```Shell
-npm install autodialog
+npm install autodialog.js
 # or
-pnpm add autodialog
+pnpm add autodialog.js
 # or
-yarn add autodialog
+yarn add autodialog.js
 ```
 
 ### Optional peer dependencies
