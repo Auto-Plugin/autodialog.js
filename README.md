@@ -241,7 +241,7 @@ Autodialog 的设计遵循三个核心原则：
 
 ## 💾 开源协议
 
-[MIT](./LICENSE) © 2025 [Larry Zhu](https://github.com/yourname)
+[MIT](./LICENSE) © 2025 [Larry Zhu](https://github.com/Larryzhu-Dev)
 
 ---
 
@@ -249,13 +249,13 @@ Autodialog 的设计遵循三个核心原则：
 
 欢迎提交 Issue 或 Pull Request！
 如果你想添加新的框架适配器（如 Solid、Qwik、Alpine.js 等），
-或改进动画与样式系统，请在 [GitHub](https://github.com/yourname/autodialog) 上参与讨论。
+或改进动画与样式系统，请在 [GitHub](https://github.com/auto-plugin/autodialog.js) 上参与讨论。
 
 ---
 
 ## ⭐ 支持项目
 
-如果你喜欢 Autodialog，请在 [GitHub](https://github.com/yourname/autodialog) 上为它点亮一颗 ⭐️
+如果你喜欢 Autodialog，请在 [GitHub](https://github.com/auto-plugin/autodialog.js) 上为它点亮一颗 ⭐️
 这将帮助更多开发者发现它！
 
 ---

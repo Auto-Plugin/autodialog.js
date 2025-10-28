@@ -200,7 +200,7 @@ Autodialog’s design follows three key principles:
 
 ## 💾 License
 
-[MIT](./LICENSE) © 2025 [Larry Zhu](https://github.com/yourname)
+[MIT](./LICENSE) © 2025 [Larry Zhu](https://github.com/Larryzhu-Dev)
 
 ***
 
@@ -210,13 +210,13 @@ Autodialog’s design follows three key principles:
 
 Contributions are welcome!
 If you find bugs or want to add new adapters (e.g., Solid, Qwik, Alpine.js),
-please open an issue or pull request on [GitHub](https://github.com/yourname/autodialog).
+please open an issue or pull request on [GitHub](https://github.com/auto-plugin/autodialog.js).
 
 ***
 
 ## ⭐ Support
 
-If you like Autodialog, consider giving it a **⭐ star** on [GitHub](https://github.com/yourname/autodialog)
+If you like Autodialog, consider giving it a **⭐ star** on [GitHub](https://github.com/auto-plugin/autodialog.js)
 to help others discover it!
 
 ***
