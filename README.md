@@ -62,9 +62,9 @@ yarn add autodialog
 ### 1️⃣ 原生 HTML
 
 ```ts
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 
-dialog.show('<div>Hello World!</div>')
+autodialog.show('<div>Hello World!</div>')
 ```
 
 ---
@@ -72,10 +72,10 @@ dialog.show('<div>Hello World!</div>')
 ### 2️⃣ Vue 3
 
 ```ts
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.vue'
 
-dialog.show(MyDialog, {
+autodialog.show(MyDialog, {
   props: { title: '你好 Vue' },
   animationDuration: 250
 })
@@ -86,10 +86,10 @@ dialog.show(MyDialog, {
 ### 3️⃣ React 18+
 
 ```tsx
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.tsx'
 
-dialog.show(MyDialog, {
+autodialog.show(MyDialog, {
   props: { message: '你好 React' }
 })
 ```
@@ -99,7 +99,7 @@ dialog.show(MyDialog, {
 ### 4️⃣ 自定义适配器（例如 Svelte）
 
 ```ts
-import { Dialog } from 'autodialog'
+import { Dialog } from 'autodialog.js'
 import { mount } from 'svelte'
 
 export const SvelteAdapter = {
@@ -128,7 +128,7 @@ Dialog.registerAdapter({
 
 ```ts
 import MyDialog from './MyDialog.svelte'
-dialog.show(MyDialog, { props: { text: '来自 Svelte 的弹窗 ✨' } })
+autodialog.show(MyDialog, { props: { text: '来自 Svelte 的弹窗 ✨' } })
 ```
 
 ---
@@ -182,7 +182,7 @@ Autodialog 仅注入极少量样式，用于布局与动画：
 
 ## ⚙️ API
 
-### `dialog.show(content, options?)`
+### `autodialog.show(content, options?)`
 
 | 选项                | 类型                                 | 默认值      | 说明                 |
 | ------------------- | ------------------------------------ | ----------- | -------------------- |

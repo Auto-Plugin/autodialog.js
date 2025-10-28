@@ -57,9 +57,9 @@ Otherwise, they will not be installed automatically.
 ### 1️⃣ Basic HTML usage
 
 ```TypeScript
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 
-dialog.show('<div>Hello World!</div>')
+autodialog.show('<div>Hello World!</div>')
 ```
 
 ***
@@ -67,10 +67,10 @@ dialog.show('<div>Hello World!</div>')
 ### 2️⃣ Vue 3 example
 
 ```TypeScript
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.vue'
 
-dialog.show(MyDialog, {
+autodialog.show(MyDialog, {
   props: { title: 'Hello Vue' },
   animationDuration: 250,
 })
@@ -81,10 +81,10 @@ dialog.show(MyDialog, {
 ### 3️⃣ React example
 
 ```TSX
-import { dialog } from 'autodialog'
+import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.tsx'
 
-dialog.show(MyDialog, {
+autodialog.show(MyDialog, {
   props: { message: 'Hello React' },
 })
 ```
@@ -94,23 +94,24 @@ dialog.show(MyDialog, {
 ### 4️⃣ Registering a custom adapter (e.g. Svelte)
 
 ```TypeScript
-import { Dialog } from 'autodialog'
+import { Dialog } from 'autodialog.js'
 import { mount } from 'svelte'
 
 export const SvelteAdapter = {
-  render(Component, { panel, props = {}, onClose }) {
+  render(Component: any, { panel, props = {}, onClose }: any) {
     const instance = mount(Component, {
       target: panel,
       props: { ...props, onClose },
     })
     ;(panel as any).__svelte__ = instance
   },
-  unmount(panel) {
+  unmount(panel: HTMLElement) {
     const inst = (panel as any).__svelte__
-    inst?.destroy?.()
+    if (inst?.destroy) inst.destroy()
     delete (panel as any).__svelte__
   },
 }
+
 
 Dialog.registerAdapter({
   name: 'svelte',
@@ -123,7 +124,7 @@ Now you can call:
 
 ```TypeScript
 import MyDialog from './MyDialog.svelte'
-dialog.show(MyDialog, { props: { text: 'Hello Svelte' } })
+autodialog.show(MyDialog, { props: { text: 'Hello Svelte' } })
 ```
 
 ***
@@ -147,7 +148,7 @@ You can override them freely in your own CSS — they are low-specificity global
 
 ## ⚙️ API
 
-### `dialog.show(content, options?)`
+### `autodialog.show(content, options?)`
 
 | Option                                                                 | Type                                 | Default     | Description                         |
 | ---------------------------------------------------------------------- | ------------------------------------ | ----------- | ----------------------------------- |

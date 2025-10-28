@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { autodialog } from '../../src/core'
+  import autodialog from '../../src'
   import SvelteDialog from './SvelteDialog.svelte'
 
   function openDialog() {
