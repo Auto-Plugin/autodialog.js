@@ -13,6 +13,8 @@ English | [简体中文](./README.md)
 [![npm version](https://img.shields.io/npm/v/autodialog.js.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog.js)
 [![typescript](https://img.shields.io/badge/用TypeScript编写-3178c6)](https://www.typescriptlang.org/)
 
+![alt text](public/e.webp)
+
 ***
 
 ## ✨ Features

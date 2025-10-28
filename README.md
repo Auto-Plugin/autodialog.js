@@ -13,27 +13,29 @@
 [![npm version](https://img.shields.io/npm/v/autodialog.js.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog.js)
 [![typescript](https://img.shields.io/badge/用TypeScript编写-3178c6)](https://www.typescriptlang.org/)
 
----
+![alt text](public/e.webp)
+
+***
 
 ## ✨ 特性
 
-- ⚙️ **框架无关**：核心完全基于原生 DOM，无需依赖任何框架。
+* ⚙️ **框架无关**：核心完全基于原生 DOM，无需依赖任何框架。
 
-- 🧩 **内置适配器**：支持 Vue、React、HTML。
+* 🧩 **内置适配器**：支持 Vue、React、HTML。
 
-- 🪶 **可扩展适配器**：可轻松集成 Svelte、Solid、Lit、Qwik 等框架。
+* 🪶 **可扩展适配器**：可轻松集成 Svelte、Solid、Lit、Qwik 等框架。
 
-- 🎞️ **内置基础动画**：支持进入 / 离开过渡。
+* 🎞️ **内置基础动画**：支持进入 / 离开过渡。
 
-- 🎨 **最小化样式**：只包含布局和基础动画，用户可完全自定义样式。
+* 🎨 **最小化样式**：只包含布局和基础动画，用户可完全自定义样式。
 
-- 🧠 **完整生命周期钩子**：支持 `onBeforeOpen`、`onOpened`、`onBeforeClose`、`onClosed`、`onMaskClick`。
+* 🧠 **完整生命周期钩子**：支持 `onBeforeOpen`、`onOpened`、`onBeforeClose`、`onClosed`、`onMaskClick`。
 
----
+***
 
 ## 🚀 安装
 
-```bash
+```Shell
 npm install autodialog
 # 或者
 pnpm add autodialog
@@ -45,7 +47,7 @@ yarn add autodialog
 
 如果你需要使用内置的 Vue 或 React 适配器，请确保你的项目已经安装：
 
-```json
+```JSON
 "peerDependencies": {
   "vue": ">=3.0.0",
   "react": ">=18.0.0",
@@ -55,23 +57,23 @@ yarn add autodialog
 
 > Autodialog 不会自动安装这些框架，它只会与宿主项目中的版本共享使用。
 
----
+***
 
 ## 🧱 使用示例
 
 ### 1️⃣ 原生 HTML
 
-```ts
+```TypeScript
 import autodialog from 'autodialog.js'
 
 autodialog.show('<div>Hello World!</div>')
 ```
 
----
+***
 
 ### 2️⃣ Vue 3
 
-```ts
+```TypeScript
 import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.vue'
 
@@ -81,11 +83,11 @@ autodialog.show(MyDialog, {
 })
 ```
 
----
+***
 
 ### 3️⃣ React 18+
 
-```tsx
+```TSX
 import autodialog from 'autodialog.js'
 import MyDialog from './MyDialog.tsx'
 
@@ -94,11 +96,11 @@ autodialog.show(MyDialog, {
 })
 ```
 
----
+***
 
 ### 4️⃣ 自定义适配器（例如 Svelte）
 
-```ts
+```TypeScript
 import { Dialog } from 'autodialog.js'
 import { mount } from 'svelte'
 
@@ -126,18 +128,18 @@ Dialog.registerAdapter({
 
 现在可以直接这样调用：
 
-```ts
+```TypeScript
 import MyDialog from './MyDialog.svelte'
 autodialog.show(MyDialog, { props: { text: '来自 Svelte 的弹窗 ✨' } })
 ```
 
----
+***
 
 ## 🎨 默认样式（极简）
 
 Autodialog 仅注入极少量样式，用于布局与动画：
 
-```css
+```CSS
 .autodialog-container {
   position: fixed;
   inset: 0;
@@ -178,34 +180,34 @@ Autodialog 仅注入极少量样式，用于布局与动画：
 
 这些样式优先级极低，用户可自由覆盖或替换。
 
----
+***
 
 ## ⚙️ API
 
 ### `autodialog.show(content, options?)`
 
-| 选项                | 类型                                 | 默认值      | 说明                 |
-| ------------------- | ------------------------------------ | ----------- | -------------------- |
-| `title`             | `string`                             | `undefined` | 可选标题             |
-| `props`             | `object`                             | `{}`        | 传递给组件的参数     |
-| `showMask`          | `boolean`                            | `true`      | 是否显示遮罩层       |
-| `allowScroll`       | `boolean`                            | `false`     | 是否允许滚动页面     |
-| `animation`         | `boolean`                            | `true`      | 是否启用动画         |
+| 选项                  | 类型                                   | 默认值         | 说明         |
+| ------------------- | ------------------------------------ | ----------- | ---------- |
+| `title`             | `string`                             | `undefined` | 可选标题       |
+| `props`             | `object`                             | `{}`        | 传递给组件的参数   |
+| `showMask`          | `boolean`                            | `true`      | 是否显示遮罩层    |
+| `allowScroll`       | `boolean`                            | `false`     | 是否允许滚动页面   |
+| `animation`         | `boolean`                            | `true`      | 是否启用动画     |
 | `animationDuration` | `number`                             | `200`       | 动画持续时间（毫秒） |
-| `animationClass`    | `{ enter?: string; leave?: string }` | -           | 自定义动画类名       |
-| `onBeforeOpen`      | `() => void`                         | -           | 打开前               |
-| `onOpened`          | `() => void`                         | -           | 打开后               |
-| `onBeforeClose`     | `() => void`                         | -           | 关闭前               |
-| `onClosed`          | `() => void`                         | -           | 关闭后               |
-| `onMaskClick`       | `() => void`                         | -           | 点击遮罩层时触发     |
+| `animationClass`    | `{ enter?: string; leave?: string }` | -           | 自定义动画类名    |
+| `onBeforeOpen`      | `() => void`                         | -           | 打开前        |
+| `onOpened`          | `() => void`                         | -           | 打开后        |
+| `onBeforeClose`     | `() => void`                         | -           | 关闭前        |
+| `onClosed`          | `() => void`                         | -           | 关闭后        |
+| `onMaskClick`       | `() => void`                         | -           | 点击遮罩层时触发   |
 
----
+***
 
 ## 🧩 扩展机制
 
 任何框架都可以通过注册适配器与 Autodialog 兼容。
 
-```ts
+```TypeScript
 Dialog.registerAdapter({
   name: 'solid',
   detect: (content) => content?.$$typeof === Symbol.for('solid.component'),
@@ -215,7 +217,7 @@ Dialog.registerAdapter({
 
 适配器结构如下：
 
-```ts
+```TypeScript
 interface Adapter {
   render(content: any, options: { container: HTMLElement; panel: HTMLElement; [key: string]: any }): void
   unmount?(panel: HTMLElement): void
@@ -224,7 +226,7 @@ interface Adapter {
 
 > detect 是可选的。如果未定义，则该适配器默认匹配所有内容。
 
----
+***
 
 ## 🧠 设计理念
 
@@ -237,13 +239,13 @@ Autodialog 的设计遵循三个核心原则：
 > 💬 换句话说：
 > Autodialog 负责 “何时显示、显示在哪”，而你负责 “显示什么、如何显示”。
 
----
+***
 
 ## 💾 开源协议
 
 [MIT](./LICENSE) © 2025 [Larry Zhu](https://github.com/Larryzhu-Dev)
 
----
+***
 
 ## 🤝 贡献指南
 
@@ -251,17 +253,18 @@ Autodialog 的设计遵循三个核心原则：
 如果你想添加新的框架适配器（如 Solid、Qwik、Alpine.js 等），
 或改进动画与样式系统，请在 [GitHub](https://github.com/auto-plugin/autodialog.js) 上参与讨论。
 
----
+***
 
 ## ⭐ 支持项目
 
 如果你喜欢 Autodialog，请在 [GitHub](https://github.com/auto-plugin/autodialog.js) 上为它点亮一颗 ⭐️
 这将帮助更多开发者发现它！
 
----
+***
 
 ### ✅ TL;DR
 
 > 🪶 **Autodialog = 一个对话框系统，支持任意框架。**
 
----
+***
+
