@@ -1,5 +1,3 @@
-import { VueAdapter } from '../adapters/vue'
-import { ReactAdapter } from '../adapters/react'
 import { HtmlAdapter } from '../adapters/html'
 
 /* -------------------- 类型定义 -------------------- */
@@ -80,11 +78,10 @@ export class Dialog {
       throw new Error('[autodialog] Invalid adapter registration')
     Dialog.customAdapters.push(entry)
   }
-
   /** 
    * 自动检测逻辑（detect 不强制
    */
-  private detectAdapter(content: any): Adapter {
+  private async detectAdapter(content: any): Promise<Adapter> {
     // 1️⃣ 优先使用用户注册的自定义适配器
     for (const { detect, adapter } of Dialog.customAdapters) {
       try {
@@ -103,8 +100,8 @@ export class Dialog {
       const hasRender = !!(content as any).render
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
-      if (hasSetup || hasRender) return VueAdapter
-      if (isClass || isFunctionComponent) return ReactAdapter
+      if (hasSetup || hasRender) return (await import(/* @vite-ignore */`autodialog.js/dist/adapters/${'vue'}.js`)).VueAdapter
+      if (isClass || isFunctionComponent) return (await import(/* @vite-ignore */`autodialog.js/adapters/${'react'}.js`)).ReactAdapter
     }
 
     throw new Error('[autodialog] Unsupported component type.')
@@ -113,10 +110,10 @@ export class Dialog {
   /** 
    * 显示 Dialog
    */
-  show<T = any>(content: T, options: DialogOptions = {}) {
+  async show<T = any>(content: T, options: DialogOptions = {}) {
     if (this.isOpen) this.close()
 
-    const adapter = this.detectAdapter(content)
+    const adapter = await this.detectAdapter(content)
     const {
       onBeforeOpen,
       onOpened,
@@ -192,9 +189,9 @@ export class Dialog {
   /** 
    * 关闭 Dialog
    */
-  close() {
+  async close() {
     if (!this.isOpen || !this.container || !this.panelEl || !this.maskEl) return
-    const adapter = this.detectAdapter(this.lastContent)
+    const adapter = await this.detectAdapter(this.lastContent)
     const {
       allowScroll = false,
       animation = true,

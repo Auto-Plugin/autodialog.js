@@ -3,16 +3,20 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
+import { dir } from 'console'
 
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
 
 export default {
-  input: 'src/index.ts',
-  output: [
-    { file: 'dist/autodialog.esm.js', format: 'esm', sourcemap: true },
-    { file: 'dist/autodialog.cjs.js', format: 'cjs', sourcemap: true }
-  ],
+  input: {
+    index: 'src/index.ts',
+    'adapters/webComponents': 'src/adapters/webComponents.ts',
+    'adapters/react': 'src/adapters/react.tsx',
+    'adapters/vue': 'src/adapters/vue.ts',
+    'adapters/html': 'src/adapters/html.ts'
+  },
+  output: [{ dir: 'dist', format: 'esm', sourcemap: true, entryFileNames: '[name].js' }],
   plugins: [resolve(), commonjs(), typescript(), postcss({ inject: { insertAt: 'top' }, minimize: true })],
   // ✅ 完整自动 external 方案
   external: (id) => id.startsWith('react') || id.startsWith('vue') || builtinModules.includes(id) || Object.keys(pkg.peerDependencies || {}).includes(id)

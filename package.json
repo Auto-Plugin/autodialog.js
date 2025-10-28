@@ -1,17 +1,28 @@
 {
   "name": "autodialog.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
-  "main": "dist/autodialog.cjs.js",
-  "module": "dist/autodialog.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/autodialog.esm.js",
-      "require": "./dist/autodialog.cjs.js"
+      "import": "./dist/index.js"
+    },
+    "./dist/adapters/vue.js": {
+      "import": "./dist/adapters/vue.js"
+    },
+    "./adapters/react.js": {
+      "import": "./dist/adapters/react.js"
+    },
+    "./adapters/webComponents.js": {
+      "import": "./dist/adapters/webComponents.js"
+    },
+    "./adapters/html.js": {
+      "import": "./dist/adapters/html.js"
     }
   },
+  "files": ["dist"],
   "scripts": {
     "dev": "tsx demo/index.ts",
     "build": "rollup -c"
@@ -20,6 +31,17 @@
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
     "vue": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    } 
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.0",
