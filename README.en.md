@@ -8,10 +8,10 @@ English | [简体中文](./README.md)
 > **A lightweight, framework-agnostic dialog system.**
 > Works with **Vue**, **React**, **HTML**, and any framework via custom adapters.
 
-[![npm version](https://img.shields.io/npm/v/autodialog.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog)
-[![license](https://img.shields.io/npm/l/autodialog.svg?color=blue)](./LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/autodialog?color=blueviolet)](https://bundlephobia.com/package/autodialog)
-[![typescript](https://img.shields.io/badge/written_in-TypeScript-3178c6)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub Repo stars](https://img.shields.io/github/stars/Auto-Plugin/autodialog.js)
+[![npm version](https://img.shields.io/npm/v/autodialog.js.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog.js)
+[![typescript](https://img.shields.io/badge/用TypeScript编写-3178c6)](https://www.typescriptlang.org/)
 
 ***
 
