@@ -7,7 +7,8 @@ export { Dialog } from './core'
 Dialog.registerAdapter({
   name: 'html',
   detect: (content: any) => {
-    return typeof content === 'string' || content instanceof HTMLElement
+    // 判断是否为字符串或 HTMLElement，且不是完整的 HTML 片段
+    return (typeof content === 'string' || content instanceof HTMLElement) && !(/<\/?[a-z][\s\S]*>/i.test(content as string))
   },
   adapter: WebComponentAdapter,
 })
