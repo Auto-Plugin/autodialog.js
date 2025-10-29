@@ -1,6 +1,6 @@
 {
   "name": "autodialog.js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -13,17 +13,20 @@
     "./dist/adapters/vue.js": {
       "import": "./dist/adapters/vue.js"
     },
-    "./adapters/react.js": {
+    "./dist/adapters/react.js": {
       "import": "./dist/adapters/react.js"
     },
-    "./adapters/webComponents.js": {
+    "./dist/adapters/webComponents.js": {
       "import": "./dist/adapters/webComponents.js"
     },
-    "./adapters/html.js": {
+    "./dist/adapters/html.js": {
       "import": "./dist/adapters/html.js"
     }
   },
-  "files": ["dist","public"],
+  "files": [
+    "dist",
+    "public"
+  ],
   "scripts": {
     "dev": "tsx demo/index.ts",
     "build": "rollup -c"
@@ -42,11 +45,12 @@
     },
     "vue": {
       "optional": true
-    } 
+    }
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.2.0",
+    "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-typescript": "^11.1.2",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/node": "^24.9.1",

@@ -9,6 +9,7 @@ export interface DialogAnimationClass {
   enter?: string
   leave?: string
 }
+(globalThis as any).__DEV__ = true
 
 /**
  * 适配器接口
@@ -100,8 +101,8 @@ export class Dialog {
       const hasRender = !!(content as any).render
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
-      if (hasSetup || hasRender) return (await import(/* @vite-ignore */`autodialog.js/dist/adapters/${'vue'}.js`)).VueAdapter
-      if (isClass || isFunctionComponent) return (await import(/* @vite-ignore */`autodialog.js/adapters/${'react'}.js`)).ReactAdapter
+      if (hasSetup || hasRender) return (await import(/* @vite-ignore */`${__DEV__ ? '../../src/adapters' : 'autodialog.js/dist/adapters'}/vue.${__DEV__ ? 'ts' : 'js'}`)).VueAdapter
+      if (isClass || isFunctionComponent) return (await import(/* @vite-ignore */`${__DEV__ ? '../../src/adapters' : 'autodialog.js/dist/adapters'}/react.${__DEV__ ? 'tsx' : 'js'}`)).ReactAdapter
     }
 
     throw new Error('[autodialog] Unsupported component type.')
@@ -110,7 +111,7 @@ export class Dialog {
   /** 
    * 显示 Dialog
    */
-  async show<T = any>(content: T, options: DialogOptions = {}) {
+  async show<TContent, TResult>(content: TContent, options: DialogOptions = {}): Promise<TResult> {
     if (this.isOpen) this.close()
 
     const adapter = await this.detectAdapter(content)
@@ -152,39 +153,46 @@ export class Dialog {
     if (allowScroll === false) document.body.style.overflow = 'hidden'
 
     // 遮罩点击
-    if (showMask) {
-      maskEl.addEventListener('click', e => {
-        if (e.target === maskEl) {
-          options.onMaskClick?.()
-          if (options.onMaskClick === undefined) this.close()
-        }
+    return new Promise<TResult>(resolve => {
+      const onClose = (result: TResult) => {
+        this.close()
+        resolve(result as TResult)
+      }
+
+      if (showMask) {
+        maskEl.addEventListener('click', e => {
+          if (e.target === maskEl) {
+            options.onMaskClick?.()
+            if (options.onMaskClick === undefined) onClose(undefined as any)
+          }
+        })
+      }
+
+      // 渲染内容
+      adapter.render(content, {
+        container,
+        panel: panelEl,
+        title: options.title,
+        props: options.props,
+        onClose: onClose
       })
-    }
 
-    // 渲染内容
-    adapter.render(content, {
-      container,
-      panel: panelEl,
-      title: options.title,
-      props: options.props,
-      onClose: () => this.close(),
-    })
-
-    // 动画进入
-    if (animation) {
-      const enter = options.animationClass?.enter || 'autodialog-anim-enter'
-      panelEl.classList.add(enter)
-      requestAnimationFrame(() => {
+      // 动画进入
+      if (animation) {
+        const enter = options.animationClass?.enter || 'autodialog-anim-enter'
+        panelEl.classList.add(enter)
+        requestAnimationFrame(() => {
+          panelEl.classList.add('autodialog-visible')
+          panelEl.classList.remove(enter)
+          maskEl.classList.add('autodialog-mask-visible')
+        })
+        setTimeout(() => onOpened?.(), animationDuration)
+      } else {
         panelEl.classList.add('autodialog-visible')
-        panelEl.classList.remove(enter)
         maskEl.classList.add('autodialog-mask-visible')
-      })
-      setTimeout(() => onOpened?.(), animationDuration)
-    } else {
-      panelEl.classList.add('autodialog-visible')
-      maskEl.classList.add('autodialog-mask-visible')
-      onOpened?.()
-    }
+        onOpened?.()
+      }
+    })
   }
   /** 
    * 关闭 Dialog
