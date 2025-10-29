@@ -17,7 +17,7 @@ export interface DialogAnimationClass {
  * - unmount: 卸载 panel 上的内容（可选）
  */
 export interface Adapter {
-  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any }) => void
+  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any; onClose: (result: any) => void }) => void
   unmount?: (panel: HTMLElement) => void
 }
 /**
@@ -42,7 +42,7 @@ export interface AdapterEntry {
 export interface DialogOptions {
   title?: string
   props?: Record<string, any>
-  onClose?: () => void
+  onClose?: (result: any) => void
   showMask?: boolean
   allowScroll?: boolean
   animation?: boolean
@@ -53,7 +53,7 @@ export interface DialogOptions {
   onBeforeOpen?: () => void
   onOpened?: () => void
   onBeforeClose?: () => void
-  onClosed?: () => void
+  onClosed?: (res: any) => void
   onMaskClick?: () => void
 }
 
@@ -155,7 +155,7 @@ export class Dialog {
     // 遮罩点击
     return new Promise<TResult>(resolve => {
       const onClose = (result: TResult) => {
-        this.close()
+        this.close(result)
         resolve(result as TResult)
       }
 
@@ -197,7 +197,7 @@ export class Dialog {
   /** 
    * 关闭 Dialog
    */
-  async close() {
+  async close(result?: any) {
     if (!this.isOpen || !this.container || !this.panelEl || !this.maskEl) return
     const adapter = await this.detectAdapter(this.lastContent)
     const {
@@ -227,13 +227,13 @@ export class Dialog {
         adapter?.unmount?.(this.panelEl!)
         this.container?.remove()
         this.container = this.panelEl = this.maskEl = null
-        onClosed?.()
+        onClosed?.(result)
       }, animationDuration)
     } else {
       adapter?.unmount?.(this.panelEl!)
       this.container.remove()
       this.container = this.panelEl = this.maskEl = null
-      onClosed?.()
+      onClosed?.(result)
     }
   }
 }
