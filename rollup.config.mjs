@@ -1,23 +1,31 @@
 import { builtinModules, createRequire } from 'module'
+import { readdirSync } from 'fs'
+import { basename, extname } from 'path'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
-import { dir } from 'console'
 
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
 
+const adapterFiles = readdirSync('src/adapters')
+const adapterInputs = Object.fromEntries(
+  adapterFiles.map(file => [
+    `adapters/${basename(file, extname(file))}`,
+    `src/adapters/${file}`
+  ])
+)
+
+
 export default {
   input: {
     index: 'src/index.ts',
-    'adapters/webComponents': 'src/adapters/webComponents.ts',
-    'adapters/react': 'src/adapters/react.tsx',
-    'adapters/vue': 'src/adapters/vue.ts',
-    'adapters/html': 'src/adapters/html.ts'
+    ...adapterInputs
   },
   output: [{ dir: 'dist', format: 'esm', sourcemap: true, entryFileNames: '[name].js' }],
   plugins: [resolve(), commonjs(), typescript(), postcss({ inject: { insertAt: 'top' }, minimize: true })],
-  // ✅ 完整自动 external 方案
-  external: (id) => id.startsWith('react') || id.startsWith('vue') || builtinModules.includes(id) || Object.keys(pkg.peerDependencies || {}).includes(id)
+  external: (id) =>
+    builtinModules.includes(id) ||
+    Object.keys(pkg.peerDependencies || {}).some(dep => id.startsWith(dep))
 }
