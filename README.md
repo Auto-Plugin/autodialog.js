@@ -1,7 +1,7 @@
 简体中文 | [English](./README.en.md)
 
 <div align="center">
- <img src="./public/autodialog.svg" alt="Autodialog Logo" width="256" />
+ <img src="https://raw.githubusercontent.com/Auto-Plugin/autodialog.js/49999d80f7a2a750b058c7f23c8172b2588ca6bc/public/autodialog.svg" alt="Autodialog Logo" width="256" />
  <h1>Autodialog</h1>
 </div>
 
@@ -13,7 +13,7 @@
 [![npm version](https://img.shields.io/npm/v/autodialog.js.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog.js)
 [![typescript](https://img.shields.io/badge/用TypeScript编写-3178c6)](https://www.typescriptlang.org/)
 
-![alt text](public/e.webp)
+![alt text](https://raw.githubusercontent.com/Auto-Plugin/autodialog.js/refs/heads/main/public/e.webp)
 
 ***
 

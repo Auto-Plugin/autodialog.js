@@ -24,8 +24,7 @@
     }
   },
   "files": [
-    "dist",
-    "public"
+    "dist"
   ],
   "scripts": {
     "dev": "tsx demo/index.ts",
