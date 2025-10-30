@@ -2,8 +2,9 @@
 import autodialog from '../../src';
 import MyDialog from './MyDialog.vue'
 
-function open() {
-  autodialog.show(MyDialog, { title: 'Vue 开发测试' })
+async function open() {
+  const res = await autodialog.show(MyDialog)
+  console.log('res::: ', res);
 }
 </script>
 

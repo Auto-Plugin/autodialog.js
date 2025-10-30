@@ -4,6 +4,7 @@ import { WebComponentAdapter } from './adapters/webComponents'
 
 export { Dialog } from './core'
 
+
 Dialog.registerAdapter({
   name: 'html',
   detect: (content: any) => {

@@ -5,6 +5,8 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
+import replace from '@rollup/plugin-replace'
+import { dir } from 'console'
 
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
@@ -23,8 +25,21 @@ export default {
     index: 'src/index.ts',
     ...adapterInputs
   },
+
   output: [{ dir: 'dist', format: 'esm', sourcemap: true, entryFileNames: '[name].js' }],
-  plugins: [resolve(), commonjs(), typescript(), postcss({ inject: { insertAt: 'top' }, minimize: true })],
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript(),
+    postcss({ inject: { insertAt: 'top' }, minimize: true }),
+    replace({
+      preventAssignment: true,
+      values: {
+        __DEV__: 'false' // 打包时强制替换为 false
+      }
+    })
+  ],
+  // ✅ 完整自动 external 方案
   external: (id) =>
     builtinModules.includes(id) ||
     Object.keys(pkg.peerDependencies || {}).some(dep => id.startsWith(dep))

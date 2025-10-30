@@ -9,6 +9,7 @@ export interface DialogAnimationClass {
   enter?: string
   leave?: string
 }
+(globalThis as any).__DEV__ = true
 
 /**
  * 适配器接口
@@ -16,7 +17,7 @@ export interface DialogAnimationClass {
  * - unmount: 卸载 panel 上的内容（可选）
  */
 export interface Adapter {
-  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any }) => void
+  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any; onClose: (result: any) => void }) => void
   unmount?: (panel: HTMLElement) => void
 }
 /**
@@ -41,7 +42,7 @@ export interface AdapterEntry {
 export interface DialogOptions {
   title?: string
   props?: Record<string, any>
-  onClose?: () => void
+  onClose?: (result: any) => void
   showMask?: boolean
   allowScroll?: boolean
   animation?: boolean
@@ -52,7 +53,7 @@ export interface DialogOptions {
   onBeforeOpen?: () => void
   onOpened?: () => void
   onBeforeClose?: () => void
-  onClosed?: () => void
+  onClosed?: (res: any) => void
   onMaskClick?: () => void
 }
 
@@ -100,8 +101,27 @@ export class Dialog {
       const hasRender = !!(content as any).render
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
-      if (hasSetup || hasRender) return (await import(/* @vite-ignore */`autodialog.js/dist/adapters/${'vue'}.js`)).VueAdapter
-      if (isClass || isFunctionComponent) return (await import(/* @vite-ignore */`autodialog.js/adapters/${'react'}.js`)).ReactAdapter
+      if (hasSetup || hasRender) {
+        if (__DEV__) {
+          const VueAdapter = await import('../../src/adapters/vue')
+          return VueAdapter as any
+        } else {
+          // @ts-ignore
+          const { VueAdapter } = await import(`autodialog.js/dist/adapters/vue.js`)
+          return VueAdapter
+        }
+      }
+
+      if (isClass || isFunctionComponent) {
+        if (__DEV__) {
+          const { ReactAdapter } = await import('../../src/adapters/react')
+          return ReactAdapter as any
+        } else {
+          // @ts-ignore
+          const { ReactAdapter } = await import(`autodialog.js/dist/adapters/react.js`)
+          return ReactAdapter
+        }
+      }
     }
 
     throw new Error('[autodialog] Unsupported component type.')
@@ -110,7 +130,7 @@ export class Dialog {
   /** 
    * 显示 Dialog
    */
-  async show<T = any>(content: T, options: DialogOptions = {}) {
+  async show<TContent, TResult>(content: TContent, options: DialogOptions = {}): Promise<TResult> {
     if (this.isOpen) this.close()
 
     const adapter = await this.detectAdapter(content)
@@ -152,44 +172,51 @@ export class Dialog {
     if (allowScroll === false) document.body.style.overflow = 'hidden'
 
     // 遮罩点击
-    if (showMask) {
-      maskEl.addEventListener('click', e => {
-        if (e.target === maskEl) {
-          options.onMaskClick?.()
-          if (options.onMaskClick === undefined) this.close()
-        }
+    return new Promise<TResult>(resolve => {
+      const onClose = (result: TResult) => {
+        this.close(result)
+        resolve(result as TResult)
+      }
+
+      if (showMask) {
+        maskEl.addEventListener('click', e => {
+          if (e.target === maskEl) {
+            options.onMaskClick?.()
+            if (options.onMaskClick === undefined) onClose(undefined as any)
+          }
+        })
+      }
+
+      // 渲染内容
+      adapter.render(content, {
+        container,
+        panel: panelEl,
+        title: options.title,
+        props: options.props,
+        onClose: onClose
       })
-    }
 
-    // 渲染内容
-    adapter.render(content, {
-      container,
-      panel: panelEl,
-      title: options.title,
-      props: options.props,
-      onClose: () => this.close(),
-    })
-
-    // 动画进入
-    if (animation) {
-      const enter = options.animationClass?.enter || 'autodialog-anim-enter'
-      panelEl.classList.add(enter)
-      requestAnimationFrame(() => {
+      // 动画进入
+      if (animation) {
+        const enter = options.animationClass?.enter || 'autodialog-anim-enter'
+        panelEl.classList.add(enter)
+        requestAnimationFrame(() => {
+          panelEl.classList.add('autodialog-visible')
+          panelEl.classList.remove(enter)
+          maskEl.classList.add('autodialog-mask-visible')
+        })
+        setTimeout(() => onOpened?.(), animationDuration)
+      } else {
         panelEl.classList.add('autodialog-visible')
-        panelEl.classList.remove(enter)
         maskEl.classList.add('autodialog-mask-visible')
-      })
-      setTimeout(() => onOpened?.(), animationDuration)
-    } else {
-      panelEl.classList.add('autodialog-visible')
-      maskEl.classList.add('autodialog-mask-visible')
-      onOpened?.()
-    }
+        onOpened?.()
+      }
+    })
   }
   /** 
    * 关闭 Dialog
    */
-  async close() {
+  async close(result?: any) {
     if (!this.isOpen || !this.container || !this.panelEl || !this.maskEl) return
     const adapter = await this.detectAdapter(this.lastContent)
     const {
@@ -219,13 +246,13 @@ export class Dialog {
         adapter?.unmount?.(this.panelEl!)
         this.container?.remove()
         this.container = this.panelEl = this.maskEl = null
-        onClosed?.()
+        onClosed?.(result)
       }, animationDuration)
     } else {
       adapter?.unmount?.(this.panelEl!)
       this.container.remove()
       this.container = this.panelEl = this.maskEl = null
-      onClosed?.()
+      onClosed?.(result)
     }
   }
 }

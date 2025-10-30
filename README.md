@@ -1,7 +1,7 @@
 简体中文 | [English](./README.en.md)
 
 <div align="center">
- <img src="./public/autodialog.svg" alt="Autodialog Logo" width="256" />
+ <img src="https://raw.githubusercontent.com/Auto-Plugin/autodialog.js/49999d80f7a2a750b058c7f23c8172b2588ca6bc/public/autodialog.svg" alt="Autodialog Logo" width="256" />
  <h1>Autodialog</h1>
 </div>
 
@@ -13,7 +13,7 @@
 [![npm version](https://img.shields.io/npm/v/autodialog.js.svg?color=3c78d8)](https://www.npmjs.com/package/autodialog.js)
 [![typescript](https://img.shields.io/badge/用TypeScript编写-3178c6)](https://www.typescriptlang.org/)
 
-![alt text](public/e.webp)
+![alt text](https://raw.githubusercontent.com/Auto-Plugin/autodialog.js/refs/heads/main/public/e.webp)
 
 ***
 
@@ -61,7 +61,7 @@ yarn add autodialog.js
 
 ## 🧱 使用示例
 
-### 1️⃣ 原生 HTML
+###  原生 HTML
 
 ```TypeScript
 import autodialog from 'autodialog.js'
@@ -71,7 +71,7 @@ autodialog.show('<div>Hello World!</div>')
 
 ***
 
-### 2️⃣ Vue 3
+### Vue 3
 
 ```TypeScript
 import autodialog from 'autodialog.js'
@@ -83,9 +83,7 @@ autodialog.show(MyDialog, {
 })
 ```
 
-***
-
-### 3️⃣ React 18+
+###  React 18+
 
 ```TSX
 import autodialog from 'autodialog.js'
@@ -98,7 +96,7 @@ autodialog.show(MyDialog, {
 
 ***
 
-### 4️⃣ 自定义适配器（例如 Svelte）
+### 自定义适配器（例如 Svelte）
 
 ```TypeScript
 import { Dialog } from 'autodialog.js'
@@ -133,7 +131,51 @@ import MyDialog from './MyDialog.svelte'
 autodialog.show(MyDialog, { props: { text: '来自 Svelte 的弹窗 ✨' } })
 ```
 
-***
+### 获得结果
+
+在 autodialog 上你有两种方式获得结果。
+
+`autodialog.show` 会返回一个 promise，而被显示的组件**额外将收**到一个 onClose 的传入。以 Vue 为例
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+defineProps<{
+  onClose: (res: any) => void // 它是由 autodialog 额外传入的
+}>()
+const count = ref(0)
+</script>
+
+<template>
+  <div>
+    <p>计数：{{ count }}</p>
+    <button @click="count++">+1</button>
+    <button @click="onClose('ok')">ok</button>
+  </div>
+</template>
+<style scoped>
+div {
+  padding: 20px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  button {
+    margin-right: 10px;
+  }
+}
+</style>
+```
+
+```js
+  const res = await autodialog.show(MyDialog)
+  console.log('res::: ', res); // 点击 ok 按钮时将收到 ok
+```
+
+你可以通过 修改默认适配器的方式修改 onClose 的传入方式。
+
+除了获取 show 函数的返回值，你还可以通过 onClosed 钩子函数获取到结果。
 
 ## 🎨 默认样式（极简）
 
@@ -184,22 +226,22 @@ Autodialog 仅注入极少量样式，用于布局与动画：
 
 ## ⚙️ API
 
-### `autodialog.show(content, options?)`
+### `autodialog.show(content, options?): Promise<TResult>`
 
-| 选项                  | 类型                                   | 默认值         | 说明         |
-| ------------------- | ------------------------------------ | ----------- | ---------- |
-| `title`             | `string`                             | `undefined` | 可选标题       |
-| `props`             | `object`                             | `{}`        | 传递给组件的参数   |
-| `showMask`          | `boolean`                            | `true`      | 是否显示遮罩层    |
-| `allowScroll`       | `boolean`                            | `false`     | 是否允许滚动页面   |
-| `animation`         | `boolean`                            | `true`      | 是否启用动画     |
+| 选项                | 类型                                 | 默认值      | 说明                 |
+| ------------------- | ------------------------------------ | ----------- | -------------------- |
+| `title`             | `string`                             | `undefined` | 可选标题             |
+| `props`             | `object`                             | `{}`        | 传递给组件的参数     |
+| `showMask`          | `boolean`                            | `true`      | 是否显示遮罩层       |
+| `allowScroll`       | `boolean`                            | `false`     | 是否允许滚动页面     |
+| `animation`         | `boolean`                            | `true`      | 是否启用动画         |
 | `animationDuration` | `number`                             | `200`       | 动画持续时间（毫秒） |
-| `animationClass`    | `{ enter?: string; leave?: string }` | -           | 自定义动画类名    |
-| `onBeforeOpen`      | `() => void`                         | -           | 打开前        |
-| `onOpened`          | `() => void`                         | -           | 打开后        |
-| `onBeforeClose`     | `() => void`                         | -           | 关闭前        |
-| `onClosed`          | `() => void`                         | -           | 关闭后        |
-| `onMaskClick`       | `() => void`                         | -           | 点击遮罩层时触发   |
+| `animationClass`    | `{ enter?: string; leave?: string }` | -           | 自定义动画类名       |
+| `onBeforeOpen`      | `() => void`                         | -           | 打开前               |
+| `onOpened`          | `() => void`                         | -           | 打开后               |
+| `onBeforeClose`     | `() => void`                         | -           | 关闭前               |
+| `onClosed`          | `(res:any) => void`                  | -           | 关闭后               |
+| `onMaskClick`       | `() => void`                         | -           | 点击遮罩层时触发     |
 
 ***
 
@@ -218,9 +260,30 @@ Dialog.registerAdapter({
 适配器结构如下：
 
 ```TypeScript
-interface Adapter {
-  render(content: any, options: { container: HTMLElement; panel: HTMLElement; [key: string]: any }): void
-  unmount?(panel: HTMLElement): void
+/**
+ * 适配器接口
+ * - render: 渲染内容到 panel 上
+ * - unmount: 卸载 panel 上的内容（可选）
+ */
+export interface Adapter {
+  render: (content: any, options: { container: HTMLElement; panel: HTMLElement;[key: string]: any; onClose: (result: any) => void }) => void
+  unmount?: (panel: HTMLElement) => void
+}
+/**
+ * 适配器注册项
+ */
+export interface AdapterEntry {
+  name?: string
+  /**
+   * 可选的检测函数，当返回 true 时 adapter 才会生效，默认总是匹配
+   * @param content 传入的内容
+   * @returns 
+   */
+  detect?: (content: any) => boolean
+  /**
+   * 适配器实例
+   */
+  adapter: Adapter
 }
 ```
 
