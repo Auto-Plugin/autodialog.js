@@ -101,8 +101,27 @@ export class Dialog {
       const hasRender = !!(content as any).render
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
-      if (hasSetup || hasRender) return (await import(/* @vite-ignore */`${__DEV__ ? '../../src/adapters' : 'autodialog.js/dist/adapters'}/vue.${__DEV__ ? 'ts' : 'js'}`)).VueAdapter
-      if (isClass || isFunctionComponent) return (await import(/* @vite-ignore */`${__DEV__ ? '../../src/adapters' : 'autodialog.js/dist/adapters'}/react.${__DEV__ ? 'tsx' : 'js'}`)).ReactAdapter
+      if (hasSetup || hasRender) {
+        if (__DEV__) {
+          const VueAdapter = await import('../../src/adapters/vue')
+          return VueAdapter as any
+        } else {
+          // @ts-ignore
+          const { VueAdapter } = await import(`autodialog.js/dist/adapters/vue.js`)
+          return VueAdapter
+        }
+      }
+
+      if (isClass || isFunctionComponent) {
+        if (__DEV__) {
+          const { ReactAdapter } = await import('../../src/adapters/react')
+          return ReactAdapter as any
+        } else {
+          // @ts-ignore
+          const { ReactAdapter } = await import(`autodialog.js/dist/adapters/react.js`)
+          return ReactAdapter
+        }
+      }
     }
 
     throw new Error('[autodialog] Unsupported component type.')
