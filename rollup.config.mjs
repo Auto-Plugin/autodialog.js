@@ -11,11 +11,11 @@ const pkg = require('./package.json')
 
 export default {
   input: {
-    index: 'src/index.ts',
     'adapters/webComponents': 'src/adapters/webComponents.ts',
     'adapters/react': 'src/adapters/react.tsx',
     'adapters/vue': 'src/adapters/vue.ts',
-    'adapters/html': 'src/adapters/html.ts'
+    'adapters/html': 'src/adapters/html.ts',
+    index: 'src/index.ts',
   },
 
   output: [{ dir: 'dist', format: 'esm', sourcemap: true, entryFileNames: '[name].js' }],
@@ -27,7 +27,9 @@ export default {
     replace({
       preventAssignment: true,
       values: {
-        __DEV__: 'false' // 打包时强制替换为 false
+        __DEV__: 'false', // 打包时强制替换为 false
+        '../../src/adapters/vue': 'autodialog.js/dist/adapters/vue.js',
+        '../../src/adapters/react': 'autodialog.js/dist/adapters/react.js',
       }
     })
   ],

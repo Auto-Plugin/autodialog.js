@@ -102,25 +102,27 @@ export class Dialog {
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
       if (hasSetup || hasRender) {
-        if (__DEV__) {
-          const VueAdapter = await import('../../src/adapters/vue')
-          return VueAdapter as any
-        } else {
-          // @ts-ignore
-          const { VueAdapter } = await import(`autodialog.js/dist/adapters/vue.js`)
-          return VueAdapter
-        }
+        // if (__DEV__) {
+        //   const VueAdapter = await import('../../src/adapters/vue')
+        //   return VueAdapter as any
+        // } else {
+        //   // @ts-ignore
+        //   const { VueAdapter } = await import(`autodialog.js/dist/adapters/vue.js`)
+        //   return VueAdapter
+        // }
+        return (await import('../../src/adapters/vue')).VueAdapter as unknown as Adapter
       }
 
       if (isClass || isFunctionComponent) {
-        if (__DEV__) {
-          const { ReactAdapter } = await import('../../src/adapters/react')
-          return ReactAdapter as any
-        } else {
-          // @ts-ignore
-          const { ReactAdapter } = await import(`autodialog.js/dist/adapters/react.js`)
-          return ReactAdapter
-        }
+        // if (__DEV__) {
+        //   const { ReactAdapter } = await import('../../src/adapters/react')
+        //   return ReactAdapter as any
+        // } else {
+        //   // @ts-ignore
+        //   const { ReactAdapter } = await import(`autodialog.js/dist/adapters/react.js`)
+        //   return ReactAdapter
+        // }
+        return (await import('../../src/adapters/react')).ReactAdapter as unknown as Adapter
       }
     }
 
