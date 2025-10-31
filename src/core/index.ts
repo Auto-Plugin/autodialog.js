@@ -9,7 +9,6 @@ export interface DialogAnimationClass {
   enter?: string
   leave?: string
 }
-(globalThis as any).__DEV__ = true
 
 /**
  * 适配器接口

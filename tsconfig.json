@@ -8,7 +8,6 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["./src/types/env"],
     "baseUrl": "./",
     "paths": {
       "autodialog": ["./src"]
