@@ -28,7 +28,7 @@ export interface AdapterEntry {
   /**
    * 可选的检测函数，当返回 true 时 adapter 才会生效，默认总是匹配
    * @param content 传入的内容
-   * @returns 
+   * @returns
    */
   detect?: (content: any) => boolean
   /**
@@ -79,7 +79,7 @@ export class Dialog {
       throw new Error('[autodialog] Invalid adapter registration')
     Dialog.customAdapters.push(entry)
   }
-  /** 
+  /**
    * 自动检测逻辑（detect 不强制
    */
   private async detectAdapter(content: any): Promise<Adapter> {
@@ -102,26 +102,10 @@ export class Dialog {
       const isClass = proto && proto.isReactComponent
       const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
       if (hasSetup || hasRender) {
-        // if (__DEV__) {
-        //   const VueAdapter = await import('../../src/adapters/vue')
-        //   return VueAdapter as any
-        // } else {
-        //   // @ts-ignore
-        //   const { VueAdapter } = await import(`autodialog.js/dist/adapters/vue.js`)
-        //   return VueAdapter
-        // }
         return (await import('../../src/adapters/vue')).VueAdapter as unknown as Adapter
       }
 
       if (isClass || isFunctionComponent) {
-        // if (__DEV__) {
-        //   const { ReactAdapter } = await import('../../src/adapters/react')
-        //   return ReactAdapter as any
-        // } else {
-        //   // @ts-ignore
-        //   const { ReactAdapter } = await import(`autodialog.js/dist/adapters/react.js`)
-        //   return ReactAdapter
-        // }
         return (await import('../../src/adapters/react')).ReactAdapter as unknown as Adapter
       }
     }
@@ -129,7 +113,7 @@ export class Dialog {
     throw new Error('[autodialog] Unsupported component type.')
   }
 
-  /** 
+  /**
    * 显示 Dialog
    */
   async show<TContent, TResult>(content: TContent, options: DialogOptions = {}): Promise<TResult> {
@@ -215,7 +199,7 @@ export class Dialog {
       }
     })
   }
-  /** 
+  /**
    * 关闭 Dialog
    */
   async close(result?: any) {

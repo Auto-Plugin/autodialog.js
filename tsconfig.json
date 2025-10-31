@@ -13,8 +13,6 @@
     "paths": {
       "autodialog": ["./src"]
     },
-
-    // 👇 关键部分
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
