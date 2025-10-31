@@ -1,12 +1,11 @@
-import { builtinModules, createRequire } from 'module'
-import { readdirSync } from 'fs'
-import { basename, extname } from 'path'
+import { builtinModules, createRequire } from 'node:module'
+import { readdirSync } from 'node:fs'
+import { basename, extname } from 'node:path'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
 import replace from '@rollup/plugin-replace'
-import { dir } from 'console'
 
 const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
@@ -17,6 +16,13 @@ const adapterInputs = Object.fromEntries(
     `adapters/${basename(file, extname(file))}`,
     `src/adapters/${file}`
   ])
+)
+
+const adapterReplacements = Object.fromEntries(
+  adapterFiles.map(file => {
+    const adapterName = basename(file, extname(file))
+    return [`../../src/adapters/${adapterName}`, `autodialog.js/dist/adapters/${adapterName}.js`]
+  })
 )
 
 
@@ -35,11 +41,11 @@ export default {
     replace({
       preventAssignment: true,
       values: {
-        __DEV__: 'false' // 打包时强制替换为 false
+        __DEV__: 'false', // 打包时强制替换为 false
+        ...adapterReplacements
       }
     })
   ],
-  // ✅ 完整自动 external 方案
   external: (id) =>
     builtinModules.includes(id) ||
     Object.keys(pkg.peerDependencies || {}).some(dep => id.startsWith(dep))
