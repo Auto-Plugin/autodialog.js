@@ -3,7 +3,6 @@
     "target": "ES2019",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "ignoreDeprecations": "6.0",
     "strict": true,
     "declaration": true,
     "outDir": "dist",
