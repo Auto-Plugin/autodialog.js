@@ -98,13 +98,21 @@ export class Dialog {
       const proto = (content as any).prototype
       const hasSetup = !!(content as any).setup
       const hasRender = !!(content as any).render
-      const isClass = proto && proto.isReactComponent
-      const isFunctionComponent = typeof content === 'function' && /^[A-Z]/.test(content.name)
+
+      // 如果是 Vue 组件（具有 setup 或 render），优先识别为 Vue
       if (hasSetup || hasRender) {
         return (await import('../../src/adapters/vue')).VueAdapter as unknown as Adapter
       }
 
-      if (isClass || isFunctionComponent) {
+      // React 识别改进（兼容 React 18）
+      // - 类组件：prototype 存在且包含 isReactComponent 或 render 方法
+      // - 函数组件：content 为函数（排除已识别的 Vue）
+      // - React 特殊对象（如 forwardRef/memo）：对象上存在 $$typeof 字段
+      const isClassComponent = !!(proto && (proto.isReactComponent || typeof proto.render === 'function'))
+      const isFunctionComponent = typeof content === 'function'
+      const isReactObject = !!(content && typeof content === 'object' && '$$typeof' in content)
+
+      if (isClassComponent || isFunctionComponent || isReactObject) {
         return (await import('../../src/adapters/react')).ReactAdapter as unknown as Adapter
       }
     }

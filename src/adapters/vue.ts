@@ -1,4 +1,4 @@
-import { createApp, h, type Component } from 'vue'
+// import { createApp, h, type Component } from 'vue'
 
 interface VueRenderOptions {
   panel: HTMLElement
@@ -8,20 +8,26 @@ interface VueRenderOptions {
 }
 
 export const VueAdapter = {
-  render(Component: Component, { panel, title, props = {}, onClose }: VueRenderOptions) {
-    // 创建一个 Vue 应用实例
-    const app = createApp({
-      render() {
-        return h('div', { class: 'autodialog-vue-wrapper' }, [
-          title ? h('div', { class: 'autodialog-header' }, title) : null,
-          h(Component, { ...props, onClose }),
-        ])
-      },
-    })
+  async render(Component: any, { panel, title, props = {}, onClose }: VueRenderOptions) {
+    try {
+      // 动态导入 Vue 相关模块
+      const { createApp, h } = await import('vue')
+      // 创建一个 Vue 应用实例
+      const app = createApp({
+        render() {
+          return h('div', { class: 'autodialog-vue-wrapper' }, [
+            title ? h('div', { class: 'autodialog-header' }, title) : null,
+            h(Component, { ...props, onClose }),
+          ])
+        },
+      })
 
-    // 挂载到 panel
-    app.mount(panel)
-    ;(panel as any)._vueApp = app
+      // 挂载到 panel
+      app.mount(panel)
+        ; (panel as any)._vueApp = app
+    } catch (error) {
+      throw new Error('[autodialog] Failed to load Vue. Please ensure vue is installed.')
+    }
   },
 
   unmount(panel: HTMLElement) {
